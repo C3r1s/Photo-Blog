@@ -12,7 +12,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Photo_Blog.Server.BL", "Pho
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Photo_Blog.Server.DAL", "Photo_Blog.Server.DAL\Photo_Blog.Server.DAL.csproj", "{AC2CD61F-17C4-460C-B3BA-63A23B346D3B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Photo_Blog.Web", "Photo_Blog.Web\Photo_Blog.Web.csproj", "{82663110-EB86-4981-AB59-DC18A1608646}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Photo_Blog.Client.Web", "Photo_Blog.Client.Web\Photo_Blog.Client.Web.csproj", "{82663110-EB86-4981-AB59-DC18A1608646}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Photo_Blog.Client.BL", "Photo_Blog.Client.BL\Photo_Blog.Client.BL.csproj", "{716AF7F5-665E-4D60-A24A-EFE7AF1BA8F4}"
 EndProject
