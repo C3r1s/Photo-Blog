@@ -11,10 +11,13 @@ public class DbContextFactory : IDesignTimeDbContextFactory<DatabaseContext>
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json")
             .Build();
+
 #if DEBUG
         var connectionString = config.GetConnectionString("TestConnection");
+        Console.WriteLine($"Using connection string: {connectionString}"); // ← для отладки
 #elif RELEASE
         var connectionString = config.GetConnectionString("PublicConnection");
+            Console.WriteLine($"Using connection string: {connectionString}"); // ← для отладки
 #endif
         return new DatabaseContext(connectionString);
     }

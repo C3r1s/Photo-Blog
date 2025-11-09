@@ -85,9 +85,27 @@ public class ServerService
     public async Task<User> GetUser(string email, string password)
     {
         var context = _dbContextFactory.CreateDbContext();
-        
-        return await context.Users.FirstOrDefaultAsync(u => u.Email == email && u.Password == password) ??
-               throw new NullReferenceException();
+    
+        // 1. Находим пользователя по email
+        var user = await context.Users.FirstOrDefaultAsync(u => u.Email == email);
+    
+        if (user == null)
+            throw new UnauthorizedAccessException("Invalid email or password");
+
+        // 2. Проверяем пароль через BCrypt
+        if (!BCrypt.Net.BCrypt.Verify(password, user.Password))
+            throw new UnauthorizedAccessException("Invalid email or password");
+
+        // 3. Возвращаем пользователя БЕЗ пароля (безопасность!)
+        return new User
+        {
+            Id = user.Id,
+            Username = user.Username,
+            Email = user.Email,
+            Avatar = user.Avatar,
+            Followers = user.Followers,
+            Role = user.Role
+        };
     }
     
     public async Task<User?> GetUserByUsername(string username)
