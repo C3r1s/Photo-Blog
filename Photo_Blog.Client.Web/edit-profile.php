@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once 'session.php';
 require_once 'api/client.php';
 
@@ -19,11 +19,7 @@ $userId = $user['id'] ?? 0;
 $username = $user['username'] ?? 'User';
 $email = $user['email'] ?? '';
 $avatar = $user['avatar'] ?? null;
-
-$postsResponse = callApi('GET', "/users/{$username}/posts");
-$posts = ($postsResponse['status'] === 200 && is_array($postsResponse['data'])) 
-    ? $postsResponse['data'] 
-    : [];
-    require_once 'views/profile.tmpl.php'
+$role = $user['role'] ?? 'user';
+require_once 'views/edit-profile.tmpl.php'
 ?>
 

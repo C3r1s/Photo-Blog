@@ -7,4 +7,8 @@
         <RootNamespace>Photo_Blog.Web</RootNamespace>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Folder Include="uploads\avatars\" />
+    </ItemGroup>
+
 </Project>

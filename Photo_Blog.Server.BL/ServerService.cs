@@ -39,11 +39,9 @@ public class ServerService
         if (existingPost == null)
             throw new InvalidOperationException("Post not found");
 
-        // Проверка прав
         if (requestingUserRole != "admin" && existingPost.UserId != requestingUserId)
             throw new UnauthorizedAccessException("You can only edit your own posts.");
 
-        // Обновляем поля
         existingPost.Description = updatedPost.Description;
         existingPost.ImageUrl = updatedPost.ImageUrl;
 
@@ -59,7 +57,6 @@ public class ServerService
         if (existingPost == null)
             throw new InvalidOperationException("Post not found");
 
-        // Проверка прав
         if (requestingUserRole != "admin" && existingPost.UserId != requestingUserId)
             throw new UnauthorizedAccessException("You can only edit your own posts.");
         context.Posts.Remove(post);
@@ -85,18 +82,15 @@ public class ServerService
     public async Task<User> GetUser(string email, string password)
     {
         var context = _dbContextFactory.CreateDbContext();
-    
-        // 1. Находим пользователя по email
+
         var user = await context.Users.FirstOrDefaultAsync(u => u.Email == email);
-    
+
         if (user == null)
             throw new UnauthorizedAccessException("Invalid email or password");
 
-        // 2. Проверяем пароль через BCrypt
         if (!BCrypt.Net.BCrypt.Verify(password, user.Password))
             throw new UnauthorizedAccessException("Invalid email or password");
 
-        // 3. Возвращаем пользователя БЕЗ пароля (безопасность!)
         return new User
         {
             Id = user.Id,
@@ -107,7 +101,7 @@ public class ServerService
             Role = user.Role
         };
     }
-    
+
     public async Task<User?> GetUserByUsername(string username)
     {
         var context = _dbContextFactory.CreateDbContext();
@@ -128,16 +122,38 @@ public class ServerService
             throw new InvalidOperationException("Post not found");
         }
     }
-    
-    public async Task UpdateUserProfile(string currentUsername, string? newAvatar)
+
+    public async Task UpdateUserProfile(int userId, string newUsername, string? newAvatar)
     {
         var context = _dbContextFactory.CreateDbContext();
-        var user = await context.Users.FirstOrDefaultAsync(u => u.Username == currentUsername);
-        if (user == null)
-            throw new InvalidOperationException("User not found");
+        var user = await context.Users.FindAsync(userId);
+        if (user == null) throw new InvalidOperationException("User not found");
 
-        user.Avatar = newAvatar ?? user.Avatar; // обновляем только если передано
+        user.Username = newUsername;
+        user.Avatar = newAvatar ?? user.Avatar;
+
         context.Entry(user).State = EntityState.Modified;
         await context.SaveChangesAsync();
-    }        
+    }
+
+    public async Task ChangePassword(string email, string oldPassword, string newPassword)
+    {
+        var context = _dbContextFactory.CreateDbContext();
+        var user = await context.Users.FirstOrDefaultAsync(u => u.Email == email);
+        if (user == null || !BCrypt.Net.BCrypt.Verify(oldPassword, user.Password))
+            throw new UnauthorizedAccessException("Invalid credentials");
+
+        user.Password = BCrypt.Net.BCrypt.HashPassword(newPassword);
+        context.Entry(user).State = EntityState.Modified;
+        await context.SaveChangesAsync();
+    }
+
+    public async Task<IEnumerable<Post>> GetPostsByUser(string username)
+    {
+        var context = _dbContextFactory.CreateDbContext();
+        return await context.Posts
+            .Where(p => p.Author.Username == username)
+            .OrderByDescending(p => p.CreatedAt)
+            .ToListAsync<Post>();
+    }
 }

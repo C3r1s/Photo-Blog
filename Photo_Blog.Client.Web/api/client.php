@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 function callApi(string $method, string $path, ?array $data = null): array
 {
     $url = 'http://localhost:5262' . $path; // ← замени на реальный URL при развёртывании

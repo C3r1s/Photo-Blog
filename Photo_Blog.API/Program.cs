@@ -16,21 +16,26 @@ app.MapGet("/users/{username}", async (string username) =>
         return Results.NotFound("User not found");
     return Results.Ok(user);
 });
+app.MapGet("/users/{username}/posts", async (string username) =>
+{
+    var posts = await service.GetPostsByUser(username);
+    return Results.Ok(posts);
+});
 app.MapPost("/posts", async (Post post) => await service.AddPost(post));
 app.MapPut("/posts", async (Post post, int id, string role) => await service.UpdatePost(post, id, role));
 app.MapPost("/users", async (User user) => await service.CreateUser(user));
-app.MapPost("/users/login", ([FromBody]LoginRequest request) => service.GetUser(request.Email, request.Password));
+app.MapPost("/users/login", ([FromBody] LoginRequest request) => service.GetUser(request.Email, request.Password));
 app.MapPut("/posts/like", async (Post post) => await service.LikePost(post.Id));
-app.MapPut("/users/profile", async (UpdateProfileRequest request) =>
+app.MapPut("/users/profile", async (User updateData) =>
 {
-    try
-    {
-        await service.UpdateUserProfile(request.CurrentUsername, request.Avatar);
-        return Results.Ok();
-    }
-    catch (InvalidOperationException ex)
-    {
-        return Results.NotFound(ex.Message);
-    }
+    await service.UpdateUserProfile(updateData.Id, updateData.Username, updateData.Avatar);
+    return Results.Ok();
 });
+
+app.MapPut("/users/password", async ([FromBody] ChangePasswordRequest request) =>
+{
+    await service.ChangePassword(request.Email, request.OldPassword, request.NewPassword);
+    return Results.Ok();
+});
+
 app.Run();
