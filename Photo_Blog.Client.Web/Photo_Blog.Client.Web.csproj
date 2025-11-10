@@ -9,6 +9,7 @@
 
     <ItemGroup>
       <Folder Include="uploads\avatars\" />
+      <Folder Include="uploads\posts\" />
     </ItemGroup>
 
 </Project>

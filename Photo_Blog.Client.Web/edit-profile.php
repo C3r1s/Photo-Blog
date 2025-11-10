@@ -1,6 +1,7 @@
 ﻿<?php
 require_once 'session.php';
 require_once 'api/client.php';
+require_once 'views/components/sidebar.php';
 
 if (!isLoggedIn()) {
     header('Location: login.php');

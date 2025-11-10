@@ -6,7 +6,7 @@ $isLoggedIn = $user !== null;
 
 <div class="sidebar bg-dark text-white d-flex flex-column" style="width: 250px; min-height: 100vh; position: fixed; left: 0; top: 0; border-right: 1px solid #333;">
     <div class="p-3">
-        <h5 class="mb-4">Instagram</h5>
+        <h5 class="mb-4">Photogram</h5>
         <ul class="nav flex-column">
             <li class="nav-item mb-2">
                 <a href="/index.php" class="nav-link text-white d-flex align-items-center">
@@ -42,7 +42,7 @@ $isLoggedIn = $user !== null;
                 </a>
             </li>
             <li class="nav-item mb-2">
-                <a href="#" class="nav-link text-white d-flex align-items-center">
+                <a href="/create-post.php" class="nav-link text-white d-flex align-items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="me-2" viewBox="0 0 16 16">
                         <path d="M8 15A7 7 0 118 1a7 7 0 010 14zm0-1.5a.5.5 0 00.5-.5V11a.5.5 0 00-.5-.5H6.5a.5.5 0 00-.5.5v2.5a.5.5 0 00.5.5H8z"/>
                     </svg>

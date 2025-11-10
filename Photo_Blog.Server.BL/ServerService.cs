@@ -12,53 +12,60 @@ public class ServerService
     public async Task<IEnumerable<Post>> GetPosts()
     {
         var context = _dbContextFactory.CreateDbContext();
-        return await context.Posts.OrderByDescending(p => p.CreatedAt).ToListAsync();
+        return await context.Posts
+            .Include(p => p.Author) // ← подгружаем связанный User
+            .OrderByDescending(p => p.CreatedAt)
+            .ToListAsync();
     }
-
-    public async Task AddPost(Post post)
+    
+    public async Task<Post?> GetPostById(int postId)
     {
         var context = _dbContextFactory.CreateDbContext();
-        var postToLoad = new Post
+        return await context.Posts
+            .Include(p => p.Author)
+            .FirstOrDefaultAsync(p => p.Id == postId);
+    }
+
+    public async Task AddPost(int userId, Post post)
+    {
+        var context = _dbContextFactory.CreateDbContext();
+        var newPost = new Post
         {
-            Author = post.Author,
+            UserId = userId,
             Description = post.Description,
             ImageUrl = post.ImageUrl ?? string.Empty,
-            Likes = post.Likes,
-            CreatedAt = post.CreatedAt
+            Likes = 0,
+            CreatedAt = DateTime.UtcNow,
+            Author = context.Users.Find(userId)
         };
-        await context.Posts.AddAsync(postToLoad);
+        await context.Posts.AddAsync(newPost);
         await context.SaveChangesAsync();
     }
 
-    public async Task UpdatePost(Post updatedPost, int requestingUserId, string requestingUserRole)
+    public async Task UpdatePost(int requestingUserId, string requestingUserRole, Post updatedPost)
     {
         var context = _dbContextFactory.CreateDbContext();
+        var post = await context.Posts.FindAsync(updatedPost.Id);
+        if (post == null) throw new InvalidOperationException("Post not found");
 
-        var existingPost = await context.Posts.FindAsync(updatedPost.Id);
-
-        if (existingPost == null)
-            throw new InvalidOperationException("Post not found");
-
-        if (requestingUserRole != "admin" && existingPost.UserId != requestingUserId)
+        if (requestingUserRole != "admin" && post.UserId != requestingUserId)
             throw new UnauthorizedAccessException("You can only edit your own posts.");
 
-        existingPost.Description = updatedPost.Description;
-        existingPost.ImageUrl = updatedPost.ImageUrl;
-
-        context.Entry(existingPost).State = EntityState.Modified;
-
+        post.Description = updatedPost.Description;
+        post.ImageUrl = updatedPost.ImageUrl ?? post.ImageUrl;
+        context.Entry(post).State = EntityState.Modified;
         await context.SaveChangesAsync();
     }
 
-    public async Task DeletePost(Post post, int requestingUserId, string requestingUserRole)
+    public async Task DeletePost(int postId, int requestingUserId, string requestingUserRole)
     {
         var context = _dbContextFactory.CreateDbContext();
-        var existingPost = await context.Posts.FindAsync(post.Id);
-        if (existingPost == null)
-            throw new InvalidOperationException("Post not found");
+        var post = await context.Posts.FindAsync(postId);
+        if (post == null) throw new InvalidOperationException("Post not found");
 
-        if (requestingUserRole != "admin" && existingPost.UserId != requestingUserId)
-            throw new UnauthorizedAccessException("You can only edit your own posts.");
+        if (requestingUserRole != "admin" && post.UserId != requestingUserId)
+            throw new UnauthorizedAccessException("You can only delete your own posts.");
+
         context.Posts.Remove(post);
         await context.SaveChangesAsync();
     }

@@ -7,7 +7,6 @@
     --accent-color: #fff;
 }
 
-/* Общие настройки */
 * {
     margin: 0;
     padding: 0;
@@ -20,7 +19,6 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-/* Sidebar */
 .sidebar {
     width: 250px;
     min-height: 100vh;
@@ -105,6 +103,9 @@ body {
 
 .post-image {
     width: 100%;
+    height: auto;
+    object-fit: contain;
+    object-position: center;
 }
 
 .login-center {
@@ -217,4 +218,161 @@ body {
     max-width: 935px;
     margin: 0 auto;
     padding: 0 16px;
+}
+
+/* === Карточки в ленте === */
+.post-card.index {
+    background-color: #121212;
+    border: 1px solid #333;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.post-card.index .card-body {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.post-card.index img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    object-position: center;
+    display: block;
+}
+
+/* Описание поста */
+.post-card.index .post-description {
+    max-height: 60px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    margin: 0 0 10px 0;
+}
+
+/* Автор и дата */
+.post-card.index .post-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 0.875rem;
+    color: #aaa;
+}
+
+.post-card.index .post-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+}
+/* === Профильная карточка === */
+.profile-header-card {
+    background-color: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+.profile-header-card h1 {
+    font-size: 1.6rem;
+    margin: 0 0 6px 0;
+    font-weight: bold;
+}
+
+.profile-header-card .text-secondary,
+.profile-header-card .text-muted {
+    font-size: 1rem;
+    color: #aaa;
+}
+
+.profile-header-card .rounded-circle {
+    width: 250px;
+    height: 250px;
+    object-fit: cover;
+    object-position: center;
+}
+/* === Сетка постов === */
+.post-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 20px;
+}
+/* === Карточка поста === */
+.post-item {
+    background-color: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    overflow: hidden;
+    padding: 15px;
+    transition: transform 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    height: 650px;
+    width: auto;
+}
+
+.post-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+/* === Контейнер внутри карточки === */
+.post-item-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-between;
+}
+
+/* === Обёртка для изображения === */
+.post-image-wrapper {
+    height: calc(100% - 100px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.post-image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    border-radius: 6px;
+    background-color: #1a1a1a;
+}
+
+/* === Нижний блок: описание, дата, кнопки === */
+.post-content-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.post-content-bottom .post-description p {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    color: #ffffff;
+    font-weight: normal;
+}
+
+.post-content-bottom .post-time small {
+    font-size: 0.8rem;
+    color: #64c5ff;
+    font-weight: 500;
+}
+
+.post-content-bottom .btn-sm {
+    font-size: 0.9rem !important;
+    padding: 6px 12px !important;
+    min-width: 70px;
 }

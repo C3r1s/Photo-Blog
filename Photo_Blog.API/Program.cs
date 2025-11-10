@@ -21,8 +21,43 @@ app.MapGet("/users/{username}/posts", async (string username) =>
     var posts = await service.GetPostsByUser(username);
     return Results.Ok(posts);
 });
-app.MapPost("/posts", async (Post post) => await service.AddPost(post));
-app.MapPut("/posts", async (Post post, int id, string role) => await service.UpdatePost(post, id, role));
+app.MapPost("/posts", async (PostCreateRequest request) => 
+{
+    var post = new Post
+    {
+        UserId = request.UserId,
+        Description = request.Description,
+        ImageUrl = request.ImageUrl,
+        Likes = 0,
+        CreatedAt = DateTime.UtcNow
+    };
+    await service.AddPost(request.UserId, post);
+    return Results.Created($"/posts/{post.Id}", post);
+});
+
+app.MapPost("/posts/get", async ([FromBody] PostGetRequest request) =>
+{
+    var post = await service.GetPostById(request.Id);
+    if (post == null) return Results.NotFound();
+    return Results.Ok(post);
+});
+app.MapPost("/posts/update", async ([FromBody] PostUpdateRequest request) =>
+{
+    await service.UpdatePost(request.UserId, request.Role, new Post
+    {
+        Id = request.Id,
+        Description = request.Description,
+        ImageUrl = request.ImageUrl
+    });
+    return Results.Ok();
+});
+app.MapPost("/posts/delete", async ([FromBody] DeletePostRequest request) =>
+{
+    await service.DeletePost(request.Id, request.UserId, request.Role);
+    return Results.Ok();
+});
+
+
 app.MapPost("/users", async (User user) => await service.CreateUser(user));
 app.MapPost("/users/login", ([FromBody] LoginRequest request) => service.GetUser(request.Email, request.Password));
 app.MapPut("/posts/like", async (Post post) => await service.LikePost(post.Id));

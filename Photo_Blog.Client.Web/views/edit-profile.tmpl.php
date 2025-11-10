@@ -3,20 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Profile • PhotoBlog</title>
+    <title>Edit Profile • Photogram</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="stylesheet" href="/assets/style.css">
 </head>
 <body data-user-id="<?= (int)$userId ?>">
-<?php require_once 'views/components/sidebar.php'; ?>
 
 <div class="main-wrapper d-flex flex-column min-vh-100" style="margin-left: 250px;">
     <div class="main-content flex-grow-1">
         <div class="content-container">
             <h2 class="mb-4">Edit profile</h2>
 
-            <!-- User Info Card -->
             <div class="card bg-dark mb-4">
                 <div class="card-body d-flex align-items-center justify-content-between">
                     <div class="d-flex align-items-center">
@@ -69,5 +67,5 @@
                 </div>
             </form>
         </div>
-</div>
+    </div>
     <?php require_once 'views/components/footer.php'; ?>

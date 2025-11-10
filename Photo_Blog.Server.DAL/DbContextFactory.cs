@@ -14,10 +14,8 @@ public class DbContextFactory : IDesignTimeDbContextFactory<DatabaseContext>
 
 #if DEBUG
         var connectionString = config.GetConnectionString("TestConnection");
-        Console.WriteLine($"Using connection string: {connectionString}");
 #elif RELEASE
         var connectionString = config.GetConnectionString("PublicConnection");
-            Console.WriteLine($"Using connection string: {connectionString}");
 #endif
         return new DatabaseContext(connectionString);
     }

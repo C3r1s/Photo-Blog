@@ -24,6 +24,7 @@ $postsResponse = callApi('GET', "/users/{$username}/posts");
 $posts = ($postsResponse['status'] === 200 && is_array($postsResponse['data'])) 
     ? $postsResponse['data'] 
     : [];
-    require_once 'views/profile.tmpl.php'
+    require_once 'views/components/sidebar.php';
+    require_once 'views/profile.tmpl.php';
 ?>
 
