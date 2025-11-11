@@ -44,7 +44,6 @@ if (!in_array(strtolower($ext), $allowed)) {
     exit;
 }
 
-// Уникальное имя файла
 $filename = 'post_' . uniqid() . '.' . strtolower($ext);
 $filepath = $uploadDir . $filename;
 

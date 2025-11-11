@@ -8,6 +8,7 @@ if (!isLoggedIn()) {
 }
 
 $user = getUser();
+$currentPage = 'profile';
 
 if ($user === null) {
     session_destroy();

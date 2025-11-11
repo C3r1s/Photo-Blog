@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../session.php';
+require_once __DIR__ . '/client.php';
 
 if (!isLoggedIn()) {
     http_response_code(401);
@@ -10,6 +11,8 @@ if (!isLoggedIn()) {
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
+    header('Content-Type: application/json');
+    echo json_encode(['success' => false, 'error' => 'Method not allowed']);
     exit;
 }
 
@@ -55,28 +58,25 @@ if (!in_array(strtolower($ext), $allowed)) {
 $filename = "avatar_{$userId}." . strtolower($ext);
 $filepath = $uploadDir . $filename;
 
-if (move_uploaded_file($_FILES['avatar']['tmp_name'], $filepath)) {
-    $avatarUrl = "/uploads/avatars/{$filename}";
-    $_SESSION['user']['avatar'] = $avatarUrl;
-
-    $userData = $_SESSION['user'];
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, 'http://localhost:5262/users/profile');
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
-        'id' => $userData['id'],
-        'username' => $userData['username'],
-        'avatar' => $avatarUrl
-    ]));
-    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    $response = curl_exec($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-
-    echo json_encode(['success' => true, 'avatarUrl' => $avatarUrl]);
-} else {
+if (!move_uploaded_file($_FILES['avatar']['tmp_name'], $filepath)) {
     http_response_code(500);
     echo json_encode(['success' => false, 'error' => 'File save failed. Check permissions.']);
+    exit;
 }
-?>
+
+$avatarUrl = "/uploads/avatars/{$filename}";
+$_SESSION['user']['avatar'] = $avatarUrl;
+
+$userData = $_SESSION['user'];
+$apiResponse = callApi('PUT', '/users/profile', [
+    'Id' => $userData['id'],
+    'Username' => $userData['username'],
+    'AvatarUrl' => $avatarUrl
+]);
+$success = $apiResponse['status'] >= 200 && $apiResponse['status'] < 300;
+
+echo json_encode([
+    'success' => $success,
+    'avatarUrl' => $avatarUrl
+]);
+

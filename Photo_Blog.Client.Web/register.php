@@ -1,10 +1,12 @@
 <?php
 require_once 'session.php';
+require_once __DIR__ . '/api/auth.php';
 
 if (isLoggedIn()) {
     header('Location: index.php');
     exit;
 }
+
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -15,23 +17,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (strlen($password) < 6) {
         $error = 'Password must be at least 6 characters.';
     } else {
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, 'http://localhost:5262/users');
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
-            'username' => $username,
-            'email' => $email,
-            'password' => $password,
-            'avatar' => null,
-            'followers' => 0
-        ]));
-        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $response = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
+        $response = registerUser($username, $email, $password);
 
-        if ($httpCode === 200 || $httpCode === 201) {
+        if (in_array($response['status'], [200, 201], true)) {
             $_SESSION['register_success'] = true;
             header('Location: login.php');
             exit;
@@ -40,5 +28,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
-require_once 'views/register.tmpl.php'
-?>
+
+require_once 'views/register.tmpl.php';

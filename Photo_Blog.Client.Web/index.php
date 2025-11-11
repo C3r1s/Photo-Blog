@@ -20,6 +20,7 @@ $posts = ($postsResponse['status'] === 200 && is_array($postsResponse['data']))
     $avatar = $user['avatar'] ?? null;
 $isLoggedIn = isLoggedIn();
 if ($isLoggedIn):
+$currentPage = 'home';
 require_once 'views/components/sidebar.php';
 endif; 
 require_once 'views/index.tmpl.php'

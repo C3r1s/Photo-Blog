@@ -21,13 +21,13 @@ if (saveChangesBtn && userId) {
 
             const data = await res.json();
             if (data.success) {
-                alert('Profile updated!');
-                location.reload();
+                window.location.href = '/profile.php';
             } else {
-                alert('Error: ' + data.error);
+                alert('Error: ' + data.error + data.toString());
             }
         } catch (err) {
             console.error('Update profile error:', err);
+            console.error(err.toString());
             alert('Network error during profile update');
         }
     });
@@ -89,7 +89,6 @@ if (changePhotoBtn && avatarInput) {
                 if (avatarPreview) {
                     avatarPreview.src = data.avatarUrl + '?t=' + Date.now();
                 }
-                alert('Avatar updated!');
             } else {
                 alert('Upload failed: ' + data.error);
             }
@@ -127,7 +126,8 @@ if (deleteButtons.length && deleteModalEl && confirmDeleteBtn) {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     action: 'delete',
-                    id: parseInt(currentPostId)
+                    id: parseInt(currentPostId),
+                    role: userRole
                 })
             });
 
@@ -160,7 +160,8 @@ if (editButtons.length && editModalEl && saveEditBtn) {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         action: 'get',
-                        id: parseInt(currentPostId)
+                        id: parseInt(currentPostId),
+                        role: userRole
                     })
                 });
 
