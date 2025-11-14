@@ -17,16 +17,13 @@ public class Post
 
     [Required]
     [MaxLength(500)]
-    public string Description { get; set; }
+    public string Description { get; set; } = string.Empty;
 
     public int Likes { get; set; }
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-    public string ImageUrl { get; set; }
-    
-    public void Like()
-    {
-        Likes++;
-    }
+    public string ImageUrl { get; set; } = string.Empty;
+
+    public virtual ICollection<Like> LikesCollection { get; set; } = new List<Like>();
 }

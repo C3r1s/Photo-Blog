@@ -376,3 +376,43 @@ body {
     padding: 6px 12px !important;
     min-width: 70px;
 }
+/* === Стили для кнопки лайка === */
+.like-post {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    border: 1px solid #555;
+    border-radius: 4px;
+    background-color: transparent;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.like-post:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: #888;
+}
+
+.like-post.liked {
+    background-color: #dc3545 !important;
+    color: white !important;
+    border-color: #dc3545 !important;
+}
+
+.like-post.liked:hover {
+    background-color: #c82333 !important;
+}
+
+/* Стиль для счетчика лайков */
+.like-post .like-count {
+    font-size: 0.9rem;
+    font-weight: bold;
+    margin-left: 4px;
+}
+
+.admin-set-likes-btn {
+    font-size: 0.8rem !important;
+    padding: 0.25rem 0.5rem !important;
+}

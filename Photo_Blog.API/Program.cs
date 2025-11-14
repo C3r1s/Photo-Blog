@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Photo_Blog.DTOs;
 using Photo_Blog.Server.BL;
@@ -72,5 +73,26 @@ app.MapPut("/users/password", async ([FromBody] ChangePasswordRequest request) =
     await service.ChangePassword(request.Email, request.OldPassword, request.NewPassword);
     return Results.Ok();
 });
+
+app.MapPost("/posts/like", async (LikePostRequest request) => 
+{
+    var result = await service.ToggleLikeAsync(request.PostId, request.UserId);
+    return Results.Ok(new { liked = result });
+});
+
+app.MapPost("/posts/admin-likes", async (HttpContext context) =>
+{
+    using var reader = new StreamReader(context.Request.Body);
+    var body = await reader.ReadToEndAsync();
+    var data = JsonSerializer.Deserialize<JsonElement>(body);
+
+    int postId = data.GetProperty("postId").GetInt32();
+    int likes = data.GetProperty("likes").GetInt32();
+
+    var newLikes = await service.SetAdminLikesAsync(postId, likes);
+    return Results.Ok(new { likes = newLikes });
+});
+
+app.MapGet("/users/{userId}/likes", async (int userId) => Results.Ok(await service.GetUserLikesAsync(userId)));
 
 app.Run();

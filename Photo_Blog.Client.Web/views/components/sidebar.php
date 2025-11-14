@@ -17,31 +17,6 @@ $isLoggedIn = $user !== null;
                 </a>
             </li>
             <li class="nav-item mb-2">
-                <a href="#" class="nav-link text-white d-flex align-items-center <?= $currentPage === 'search' ? 'active' : '' ?>">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="me-2" viewBox="0 0 16 16">
-                        <path d="M15.5 14a6.5 6.5 0 00-13 0h13z"/>
-                        <path d="M8 1a2 2 0 00-2 2v1.5a1 1 0 001 1h2a1 1 0 001-1V3a2 2 0 00-2-2z"/>
-                    </svg>
-                    Search
-                </a>
-            </li>
-            <li class="nav-item mb-2">
-                <a href="#" class="nav-link text-white d-flex align-items-center <?= $currentPage === 'messages' ? 'active' : '' ?>">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="me-2" viewBox="0 0 16 16">
-                        <path d="M8 15A7 7 0 118 1a7 7 0 010 14zm0-1.5a.5.5 0 00.5-.5V11a.5.5 0 00-.5-.5H6.5a.5.5 0 00-.5.5v2.5a.5.5 0 00.5.5H8z"/>
-                    </svg>
-                    Messages
-                </a>
-            </li>
-            <li class="nav-item mb-2">
-                <a href="#" class="nav-link text-white d-flex align-items-center <?= $currentPage === 'notifications' ? 'active' : '' ?>">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="me-2" viewBox="0 0 16 16">
-                        <path d="M8 15A7 7 0 118 1a7 7 0 010 14zm0-1.5a.5.5 0 00.5-.5V11a.5.5 0 00-.5-.5H6.5a.5.5 0 00-.5.5v2.5a.5.5 0 00.5.5H8z"/>
-                    </svg>
-                    Notifications
-                </a>
-            </li>
-            <li class="nav-item mb-2">
                 <a href="/create-post.php" class="nav-link text-white d-flex align-items-center <?= $currentPage === 'create' ? 'active' : '' ?>">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="me-2" viewBox="0 0 16 16">
                         <path d="M8 15A7 7 0 118 1a7 7 0 010 14zm0-1.5a.5.5 0 00.5-.5V11a.5.5 0 00-.5-.5H6.5a.5.5 0 00-.5.5v2.5a.5.5 0 00.5.5H8z"/>

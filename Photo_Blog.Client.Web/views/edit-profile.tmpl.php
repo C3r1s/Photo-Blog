@@ -55,17 +55,11 @@
                     </select>
                     <div class="form-text text-secondary">This won't be part of your public profile.</div>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label">New Password (optional)</label>
-                    <input type="password" class="form-control bg-secondary text-white" 
-                           id="newPassword" placeholder="Leave blank to keep current password">
-                </div>
 
                 <div class="d-flex gap-2 mt-4">
-                    <button type="button" class="btn btn-primary w-100" id="changePasswordBtn">Change password</button>
                     <button type="button" class="btn btn-primary w-100" id="saveChangesBtn">Submit</button>
                 </div>
             </form>
         </div>
     </div>
-    <?php require_once 'views/components/footer.php'; ?>
+<?php require_once 'views/components/footer.php'; ?>

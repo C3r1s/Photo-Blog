@@ -20,15 +20,10 @@
                                  alt="Avatar" class="rounded-circle">
                             <div>
                                 <h1 class="mb-1"><?= htmlspecialchars($username) ?></h1>
+                                @<?= htmlspecialchars($username) ?>
                                 <p class="text-secondary mb-2"><?= count($posts) ?> posts</p>
                                 <a href="edit-profile.php" class="btn btn-outline-light">Edit profile</a>
                             </div>
-                        </div>
-                        <div class="mt-2">
-                            <p class="text">
-                                Good men mean well. They're just don't always end up doing well. - Isaac Clarke<br>
-                                @<?= htmlspecialchars($username) ?>
-                            </p>
                         </div>
                     </div>
 

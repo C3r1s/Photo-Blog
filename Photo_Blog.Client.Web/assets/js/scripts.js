@@ -15,8 +15,8 @@ if (saveChangesBtn && userId) {
         try {
             const res = await fetch('/api/profile.php?action=update_profile', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id: userId, username, avatar: null, email })
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({id: userId, username, avatar: null, email})
             });
 
             const data = await res.json();
@@ -47,8 +47,8 @@ if (changePasswordBtn) {
         try {
             const res = await fetch('/api/profile.php?action=change_password', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ oldPassword, newPassword })
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({oldPassword, newPassword})
             });
 
             const data = await res.json();
@@ -123,7 +123,7 @@ if (deleteButtons.length && deleteModalEl && confirmDeleteBtn) {
         try {
             const res = await fetch('/api/posts.php', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
                     action: 'delete',
                     id: parseInt(currentPostId),
@@ -157,7 +157,7 @@ if (editButtons.length && editModalEl && saveEditBtn) {
             try {
                 const res = await fetch('/api/posts.php', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
                         action: 'get',
                         id: parseInt(currentPostId),
@@ -231,7 +231,7 @@ if (editButtons.length && editModalEl && saveEditBtn) {
         try {
             const res = await fetch('/api/posts.php', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
                     action: 'update',
                     id: parseInt(currentPostId),
@@ -303,7 +303,7 @@ if (imageInput && createPostForm && selectImageButton) {
         try {
             const res = await fetch('/create-post.php', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
                     description,
                     image_url: imageUrl,
@@ -323,3 +323,143 @@ if (imageInput && createPostForm && selectImageButton) {
         }
     });
 }
+
+document.querySelectorAll('.like-post').forEach(button => {
+    button.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const postId = parseInt(button.dataset.postId);
+        const currentLikes = parseInt(button.dataset.likes) || 0;
+        const isLiked = button.classList.contains('liked');
+
+        try {
+            const res = await fetch('/api/like-post.php', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    postId: postId,
+                    userId: userId,
+                    role: userRole
+                })
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+
+                if (data.success && data.liked !== undefined) {
+                    if (data.liked) {
+                        button.classList.add('liked');
+                        let newLikes = currentLikes + 1;
+                        button.dataset.likes = newLikes;
+
+                        const countSpan = button.querySelector('.like-count');
+                        if (countSpan) {
+                            countSpan.textContent = newLikes;
+                        } else {
+                            const span = document.createElement('span');
+                            span.className = 'like-count ms-1';
+                            span.textContent = newLikes;
+                            button.appendChild(span);
+                        }
+
+                        fetch('/api/update-session-likes.php', {
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify({action: 'add', postId: postId})
+                        });
+                    } else {
+                        button.classList.remove('liked');
+                        let newLikes = Math.max(0, currentLikes - 1);
+                        button.dataset.likes = newLikes;
+
+                        const countSpan = button.querySelector('.like-count');
+                        if (countSpan) {
+                            if (newLikes === 0) {
+                                countSpan.remove();
+                            } else {
+                                countSpan.textContent = newLikes;
+                            }
+                        }
+
+                        fetch('/api/update-session-likes.php', {
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify({action: 'remove', postId: postId})
+                        });
+                    }
+                } else {
+                    console.error('Server response error:', data.error);
+                }
+            } else {
+                console.error('Failed to toggle like');
+            }
+        } catch (err) {
+            console.error('Error:', err);
+        }
+    });
+});
+
+document.querySelectorAll('.admin-set-likes-btn').forEach(button => {
+    button.addEventListener('click', function () {
+        const postId = this.dataset.postId;
+        const currentLikes = this.dataset.currentLikes;
+
+        document.getElementById('adminLikesInput').value = currentLikes;
+        document.getElementById('currentLikesDisplay').textContent = currentLikes;
+
+        document.getElementById('saveAdminLikesBtn').dataset.postId = postId;
+    });
+});
+
+document.getElementById('saveAdminLikesBtn').addEventListener('click', async function () {
+    const postId = this.dataset.postId;
+    const newLikes = parseInt(document.getElementById('adminLikesInput').value);
+
+    if (isNaN(newLikes) || newLikes < 0) {
+        alert('Please enter a valid number (0 or greater)');
+        return;
+    }
+
+    try {
+        const res = await fetch('/api/admin-set-likes.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                postId: parseInt(postId),
+                likes: newLikes
+            })
+        });
+
+        if (res.ok) {
+            const data = await res.json();
+            if (data.success) {
+                const likeButton = document.querySelector(`button[data-post-id="${postId}"].like-post`);
+                const likeCountSpan = likeButton.querySelector('.like-count');
+
+                if (newLikes === 0) {
+                    if (likeCountSpan) likeCountSpan.remove();
+                } else {
+                    if (likeCountSpan) {
+                        likeCountSpan.textContent = newLikes;
+                    } else {
+                        const span = document.createElement('span');
+                        span.className = 'like-count ms-1';
+                        span.textContent = newLikes;
+                        likeButton.appendChild(span);
+                    }
+                }
+
+                likeButton.dataset.likes = newLikes;
+
+                const modal = bootstrap.Modal.getInstance(document.getElementById('adminSetLikesModal'));
+                modal.hide();
+            } else {
+                alert('Failed to update likes: ' + (data.error || 'Unknown error'));
+            }
+        } else {
+            console.error('Failed to update admin likes');
+        }
+    } catch (err) {
+        console.error('Error:', err);
+        alert('Network error during admin likes update');
+    }
+});

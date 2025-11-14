@@ -13,11 +13,11 @@ public class ServerService
     {
         var context = _dbContextFactory.CreateDbContext();
         return await context.Posts
-            .Include(p => p.Author) // ← подгружаем связанный User
+            .Include(p => p.Author)
             .OrderByDescending(p => p.CreatedAt)
             .ToListAsync();
     }
-    
+
     public async Task<Post?> GetPostById(int postId)
     {
         var context = _dbContextFactory.CreateDbContext();
@@ -162,5 +162,49 @@ public class ServerService
             .Where(p => p.Author.Username == username)
             .OrderByDescending(p => p.CreatedAt)
             .ToListAsync<Post>();
+    }
+
+    public async Task<bool> ToggleLikeAsync(int postId, int userId)
+    {
+        var context = _dbContextFactory.CreateDbContext();
+        var existingLike = await context.Likes
+            .FirstOrDefaultAsync(l => l.PostId == postId && l.UserId == userId);
+
+        if (existingLike != null)
+        {
+            context.Likes.Remove(existingLike);
+            var post = await context.Posts.FindAsync(postId);
+            if (post != null && post.Likes > 0) post.Likes--;
+            await context.SaveChangesAsync();
+            return false;
+        }
+        else
+        {
+            var newLike = new Like { PostId = postId, UserId = userId };
+            await context.Likes.AddAsync(newLike);
+            var post = await context.Posts.FindAsync(postId);
+            if (post != null) post.Likes++;
+            await context.SaveChangesAsync();
+            return true;
+        }
+    }
+
+    public async Task<int> SetAdminLikesAsync(int postId, int newLikesCount)
+    {
+        var context = _dbContextFactory.CreateDbContext();
+        var post = await context.Posts.FindAsync(postId);
+        if (post == null) throw new InvalidOperationException("Post not found");
+
+        post.Likes = Math.Max(0, newLikesCount);
+        await context.SaveChangesAsync();
+        return post.Likes;
+    }
+
+    public async Task<IEnumerable<Like>> GetUserLikesAsync(int userId)
+    {
+        var context = _dbContextFactory.CreateDbContext();
+        return await context.Likes
+            .Where(l => l.UserId == userId)
+            .ToListAsync();
     }
 }

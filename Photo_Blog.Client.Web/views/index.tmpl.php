@@ -38,8 +38,29 @@
                                             <?= date('d.m.Y H:i', strtotime($post['createdAt'] ?? 'now')) ?>
                                         </small>
                                     </div>
+                                    <?php
+                                    $isLiked = in_array($post['id'], $userLikes);
+                                    ?>
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <div class="text-danger">❤️ <?= (int)($post['likes'] ?? 0) ?></div>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <button class="btn btn-sm like-post <?= $isLiked ? 'liked' : '' ?>"
+                                                    data-post-id="<?= $post['id'] ?>"
+                                                    data-likes="<?= (int)($post['likes'] ?? 0) ?>">
+                                                ❤️
+                                                <?php if (($post['likes'] ?? 0) > 0): ?>
+                                                    <span class="like-count ms-1"><?= (int)$post['likes'] ?></span>
+                                                <?php endif; ?>
+                                            </button>
+                                            <?php if ($user['role'] === 'admin'): ?>
+                                                <button class="btn btn-sm btn-outline-warning admin-set-likes-btn"
+                                                        data-post-id="<?= $post['id'] ?>"
+                                                        data-current-likes="<?= (int)($post['likes'] ?? 0) ?>"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#adminSetLikesModal">
+                                                    Edit Likes
+                                                </button>
+                                            <?php endif; ?>
+                                        </div>
                                         <?php if ($isLoggedIn): ?>
                                             <?php $currentUser = $_SESSION['user']; ?>
                                             <?php $canEdit = ($currentUser['role'] === 'admin') || 
@@ -67,5 +88,4 @@
             <?php endif; ?>
         </div> 
     </div>
-
-    <?php require_once 'views/components/footer.php'; ?>                    
+<?php require_once 'views/components/footer.php'; ?>
